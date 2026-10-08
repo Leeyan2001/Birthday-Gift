@@ -2663,9 +2663,9 @@
             }
             const rms = Math.sqrt(sum / samples.length);
             // Require sustained loud airflow, not a single click/pop.
-            if (rms > 0.19 && !blowCooldown) {
+            if (rms > 0.30 && !blowCooldown) {
               if (!blowStartedAt) blowStartedAt = performance.now();
-              if (performance.now() - blowStartedAt > 250) {
+              if (performance.now() - blowStartedAt > 500) {
                 blowOutCandle();
                 blowCooldown = true;
               }
