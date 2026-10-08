@@ -197,7 +197,6 @@
         }
       }
 
-      /* Birthday message book */
       .message-slides {
         display: none;
         position: relative;
@@ -301,8 +300,6 @@
         justify-content: center;
       }
 
-      /* Smooth, physical-feeling page turning. Both pages are temporarily
-         kept visible by JavaScript while the turn is happening. */
       .birthday-book .book-page {
         transform-origin: left center;
         transform-style: preserve-3d;
@@ -481,7 +478,6 @@
         }
       }
 
-      /* A soft moving shadow makes the turning page feel like real paper. */
       .birthday-book .book-page.turning::before {
         content: "";
         position: absolute;
@@ -541,7 +537,6 @@
         z-index: 1;
       }
 
-      /* A proper colorful birthday candle sits on top of the cake. */
       .cake-candle {
         position: absolute;
         left: 50%;
@@ -654,8 +649,6 @@
         cursor: default;
       }
 
-
-
       .flame-instruction { margin: 10px auto 12px; color: #a65e00; font-size: 14px; font-weight: 700; min-height: 22px; }
       .flame-source { position: fixed; left: 18vw; top: 24vh; z-index: 100003; display: none; }
       .flame-source.ready { display: block; animation: fireSpawn .65s cubic-bezier(.16,1.4,.3,1) both; }
@@ -666,7 +659,7 @@
       .sunflower-confetti { position:fixed; top:-50px; z-index:100004; pointer-events:none; will-change:transform,opacity; animation:sunflowerRain var(--duration) linear var(--delay) forwards; }
       @keyframes sunflowerRain { 0% { opacity:0; transform:translate3d(0,-20px,0) rotate(0deg) scale(.55); } 8% { opacity:1; } 100% { opacity:0; transform:translate3d(var(--drift),calc(100vh + 80px),0) rotate(var(--rotation)) scale(1.1); } }
       .birthday-hint { transition: opacity .3s ease; }
-      /* After the five-second hold, replace the greeting card with a focused cake surprise. */
+      
       #birthdayEnd.cake-unlocked #birthdayHeart,
       #birthdayEnd.cake-unlocked #birthdayHint,
       #birthdayEnd.cake-unlocked > h1,
@@ -825,7 +818,6 @@
         will-change: transform, opacity;
       }
 
-      /* Soft click/tap explosion used throughout the page */
       .click-burst-piece,
       .click-burst-sunflower {
         position: fixed;
@@ -1038,7 +1030,6 @@
         }
       }
 
-      /* Final kalimba presentation + audio-locked visualization */
       .kalimba-tines button {
         font-size: 0 !important;
         color: transparent !important;
@@ -1058,8 +1049,7 @@
       #page3 > button.primary[onclick*="showPage(5)"] {
         margin-top: 12px !important;
       }
-    
-      /* Final polish: balanced greeting layout + a much larger cake and draggable flame. */
+
       #birthdayEnd.show {
         min-height: min(680px, 88vh);
         justify-content: center;
@@ -1140,9 +1130,6 @@
         #birthdayEnd.cake-unlocked .birthday-cake { font-size: clamp(175px, 48vw, 220px); margin-top: 44px; }
       }
 
-
-
-      /* Final polish: balanced greeting card and a flame that replaces the candle. */
       #birthdayEnd.show:not(.cake-unlocked) {
         box-sizing: border-box !important;
         width: min(100%, 430px) !important;
@@ -1226,8 +1213,6 @@
         #birthdayEnd:not(.cake-unlocked) .birthday-hint { margin-bottom: 20px !important; }
       }
 
-
-      /* Final fix: keep the striped candle directly over the cake emoji's blue candle. */
       #birthdayEnd.cake-unlocked .birthday-cake-wrap { overflow: visible !important; }
       #birthdayEnd.cake-unlocked .cake-candle {
         display: block !important;
@@ -1279,8 +1264,6 @@
         #birthdayEnd:not(.cake-unlocked) .birthday-hint { margin-bottom: 20px !important; }
       }
 
-
-      /* Final polish: keep the lit flame at the wick, not halfway down the candle. */
       #birthdayEnd.cake-unlocked .cake-flame {
         top: -66px !important;
         left: 50% !important;
@@ -1293,7 +1276,7 @@
       #birthdayEnd.cake-unlocked .cake-flame.lit {
         animation: candleFlicker .75s ease-in-out infinite alternate !important;
       }
-      /* Hide the source fire while its draggable copy follows the pointer. */
+      
       #birthdayEnd.cake-unlocked .flame-hint.dragging {
         visibility: hidden !important;
       }
@@ -1682,11 +1665,6 @@
           });
         });
 
-      /*
-       * When I Met You – APO Hiking Society
-       * Plain letters are octave 4; * means octave 5.
-       * Notes inside parentheses are played together as a chord.
-       */
       const kalimbaTab = [
         [
           "G5",
@@ -1749,13 +1727,6 @@
 
       const melodyButton = document.getElementById("playKalimbaMelody");
 
-      /*
-       * The recording itself is the timing master.  Instead of assigning one
-       * guessed onset to each tab entry, the visualizer listens to the actual
-       * playing MP3 through an analyser and highlights the tine(s) whose pitch
-       * energy is present at that exact audio time.  This keeps the animation
-       * locked to the real recording even if browser decoding/latency differs.
-       */
       const kalimbaNoteNames = [
         "C4",
         "D4",
@@ -1806,8 +1777,6 @@
             kalimbaAnalyser.connect(kalimbaAudioContext.destination);
             kalimbaAudioConnected = true;
           } catch (e) {
-            // A MediaElementSource can only be created once. If the browser
-            // rejects it, the normal audio playback still remains usable.
           }
         }
         return kalimbaAudioConnected;
@@ -1857,8 +1826,6 @@
         }
 
         const scores = kalimbaNoteFreqs.map(function (f) {
-          // Fundamental carries most of the score; harmonics help the
-          // visualizer recognize the short, bright attack of a kalimba.
           return (
             energyNear(f, 32) * 1.0 +
             energyNear(f * 2, 32) * 0.3 +
@@ -2184,8 +2151,6 @@
         }, 1450);
       }
 
-      // One click handler is used for both mouse and touch.
-      // This prevents mobile taps from accidentally counting twice.
       bigHeart.addEventListener("click", function () {
         if (eggTriggered) {
           return;
@@ -2566,7 +2531,6 @@
         cakeTarget.classList.add("revealed");
         flameInstruction.hidden = false;
         flameSource.classList.add("ready");
-        // Make the fire appear in a different, draggable spot each time.
         const margin = 55;
         flameSource.style.left = (margin + Math.random() * Math.max(20, window.innerWidth - margin * 2)) + "px";
         flameSource.style.top = (Math.max(80, window.innerHeight * (.14 + Math.random() * .48))) + "px";
@@ -2624,7 +2588,6 @@
         }
       }
 
-      // Microphone blow detection: ask permission only after the user taps the button.
       const enableMicBlow = document.getElementById("enableMicBlow");
       const micStatus = document.getElementById("micStatus");
       let micStream = null;
@@ -2662,7 +2625,6 @@
               sum += v * v;
             }
             const rms = Math.sqrt(sum / samples.length);
-            // Require sustained loud airflow, not a single click/pop.
             if (rms > 0.30 && !blowCooldown) {
               if (!blowStartedAt) blowStartedAt = performance.now();
               if (performance.now() - blowStartedAt > 500) {
@@ -3210,9 +3172,7 @@
       .kalimba-tines button:disabled {
         cursor: default !important;
       }
-    
 
-      /* Responsive final greeting: keep the heart and message stack centered on phones. */
       #birthdayEnd.show {
         box-sizing: border-box;
         width: 100%;
@@ -3278,8 +3238,6 @@
         #birthdayEnd.cake-unlocked .blow-controls { width: 100%; padding: 0 6px; }
       }
 
-
-      /* Final alignment fix: anchor the cake and candle to the same center line. */
       #birthdayEnd.cake-unlocked .birthday-cake-wrap {
         position: relative !important;
         display: block !important;
@@ -3349,8 +3307,6 @@
         #birthdayEnd.cake-unlocked .cake-candle { top: 43px !important; }
       }
 
-
-      /* Definitive candle alignment: place the striped candle directly over the blue candle on the cake artwork. */
       #birthdayEnd.cake-unlocked .birthday-cake-wrap {
         position: relative !important;
         overflow: visible !important;
