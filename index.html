@@ -2980,9 +2980,9 @@
               sum += v * v;
             }
             const rms = Math.sqrt(sum / samples.length);
-            if (rms > 0.18 && !blowCooldown) {
+            if (rms > 0.10 && !blowCooldown) {
               if (!blowStartedAt) blowStartedAt = performance.now();
-              if (performance.now() - blowStartedAt > 200) {
+              if (performance.now() - blowStartedAt > 110) {
                 blowOutCandle();
                 blowCooldown = true;
               }
