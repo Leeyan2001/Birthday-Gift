@@ -4031,6 +4031,97 @@
         }
       }
 
-    </style>
+    
+
+      /* Mobile scrolling and content-fit fixes */
+      html {
+        min-height: 100%;
+        height: auto !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        -webkit-text-size-adjust: 100%;
+        scroll-behavior: smooth;
+      }
+      body {
+        min-height: 100vh !important;
+        min-height: 100dvh !important;
+        height: auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: flex-start !important;
+        align-items: center !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        padding: max(14px, env(safe-area-inset-top)) 12px max(28px, env(safe-area-inset-bottom)) !important;
+        -webkit-overflow-scrolling: touch;
+      }
+      .card {
+        flex: 0 0 auto !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
+        margin: 0 auto 24px !important;
+        padding: clamp(18px, 5vw, 30px) clamp(14px, 4vw, 22px) !important;
+      }
+      .page, .page.active {
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
+      }
+      .message-slides {
+        min-height: 0 !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+      }
+      .birthday-book {
+        width: 100% !important;
+        max-width: 380px !important;
+        min-height: 0 !important;
+        height: auto !important;
+      }
+      .birthday-page {
+        min-height: 0 !important;
+        height: auto !important;
+        overflow-wrap: anywhere;
+      }
+      .book-page p, .message {
+        overflow-wrap: anywhere;
+      }
+      button {
+        min-height: 44px;
+        touch-action: manipulation;
+      }
+      @media (max-width: 480px) {
+        body {
+          padding: max(10px, env(safe-area-inset-top)) 10px max(24px, env(safe-area-inset-bottom)) !important;
+        }
+        .card {
+          width: 100% !important;
+          max-width: 430px !important;
+          border-radius: 24px !important;
+          padding: 20px 15px 24px !important;
+        }
+        .heart { font-size: clamp(54px, 16vw, 75px) !important; }
+        h1 { font-size: clamp(25px, 7vw, 32px) !important; line-height: 1.2; overflow-wrap: anywhere; }
+        h2 { font-size: clamp(22px, 6vw, 27px) !important; line-height: 1.25; }
+        .message { font-size: 16px !important; line-height: 1.6 !important; }
+        .message-slides { padding: 8px 0 14px !important; }
+        .birthday-book { padding: 10px !important; transform: none !important; }
+        .birthday-page { padding: 30px 20px 26px !important; }
+        .book-page p { font-size: clamp(15px, 4.2vw, 18px) !important; line-height: 1.65 !important; }
+        .book-controls { flex-wrap: wrap !important; gap: 8px !important; }
+        .book-controls button { min-width: 0 !important; flex: 1 1 105px; padding: 10px 9px !important; }
+        .book-progress { flex: 1 0 100%; order: -1; }
+        .kalimba-wrap { transform: scale(.88); transform-origin: top center; margin-bottom: 4px !important; }
+        #bigHeart { font-size: clamp(100px, 30vw, 140px) !important; }
+      }
+      @media (max-height: 700px) and (max-width: 480px) {
+        body { justify-content: flex-start !important; }
+        #birthdayEnd.show:not(.cake-unlocked) { min-height: 0 !important; }
+      }
+</style>
   </body>
 </html>
