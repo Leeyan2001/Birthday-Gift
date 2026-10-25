@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
     <title>A Birthday Gift ❤️</title>
     <style>
@@ -3774,6 +3774,263 @@
           top: 48px !important;
         }
       }
+    
+      /* Responsive/mobile layout fixes — intentionally last to override older rules */
+      html {
+        width: 100%;
+        min-height: 100%;
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+      }
+
+      body {
+        width: 100%;
+        min-height: 100vh;
+        min-height: 100svh;
+        height: auto;
+        overflow-x: hidden;
+        overflow-y: auto;
+        align-items: center;
+        padding:
+          max(14px, env(safe-area-inset-top))
+          max(12px, env(safe-area-inset-right))
+          max(18px, env(safe-area-inset-bottom))
+          max(12px, env(safe-area-inset-left));
+      }
+
+      .card {
+        width: min(100%, 430px);
+        max-width: 430px;
+        min-width: 0;
+        margin: auto;
+        padding: clamp(20px, 5vw, 30px) clamp(16px, 4.5vw, 22px);
+        overflow: visible;
+      }
+
+      .page,
+      .page.active {
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+
+      h1 {
+        font-size: clamp(25px, 7vw, 32px);
+        line-height: 1.2;
+        overflow-wrap: break-word;
+      }
+
+      h2 {
+        font-size: clamp(22px, 6vw, 26px);
+        line-height: 1.25;
+        overflow-wrap: break-word;
+      }
+
+      .message {
+        font-size: clamp(15px, 4vw, 17px);
+        line-height: 1.65;
+        overflow-wrap: break-word;
+      }
+
+      button {
+        max-width: 100%;
+        min-height: 44px;
+        white-space: normal;
+        overflow-wrap: break-word;
+        touch-action: manipulation;
+      }
+
+      .secondary {
+        margin-right: 0;
+      }
+
+      .message-slides {
+        width: 100%;
+        min-height: 0;
+        padding: 8px 0 16px;
+      }
+
+      .birthday-book {
+        width: 100%;
+        max-width: 380px;
+        min-height: 0;
+      }
+
+      .birthday-page {
+        min-height: 0;
+        padding: clamp(28px, 7vw, 38px) clamp(18px, 5vw, 28px) 28px;
+      }
+
+      .book-page p {
+        font-size: clamp(16px, 4.3vw, 18px);
+        line-height: 1.7;
+        overflow-wrap: break-word;
+      }
+
+      .book-controls {
+        flex-wrap: wrap;
+        width: 100%;
+      }
+
+      .book-controls button {
+        min-width: 0;
+        flex: 1 1 105px;
+      }
+
+      .kalimba-wrap {
+        max-width: 100%;
+        transform-origin: center top;
+      }
+
+      #birthdayEnd.show {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 430px;
+        min-height: 0;
+        margin: 0 auto;
+      }
+
+      #birthdayEnd.cake-unlocked.show {
+        width: 100%;
+        min-height: 0;
+        max-width: 430px;
+        overflow: visible;
+      }
+
+      @media (max-width: 480px) {
+        body {
+          display: flex;
+          align-items: flex-start;
+          justify-content: center;
+          padding:
+            max(10px, env(safe-area-inset-top))
+            max(10px, env(safe-area-inset-right))
+            max(18px, env(safe-area-inset-bottom))
+            max(10px, env(safe-area-inset-left));
+        }
+
+        .card {
+          width: 100%;
+          max-width: 430px;
+          border-radius: 24px;
+          padding: 22px 17px;
+          margin: 0 auto;
+        }
+
+        .heart {
+          font-size: clamp(54px, 16vw, 75px);
+          margin-bottom: 10px;
+        }
+
+        .message {
+          margin-bottom: 20px;
+        }
+
+        .birthday-book {
+          padding: 10px;
+          border-radius: 15px;
+          transform: none;
+        }
+
+        .birthday-page {
+          padding: 28px 16px 24px;
+        }
+
+        .book-cover .book-heart {
+          font-size: clamp(54px, 15vw, 72px);
+        }
+
+        .book-cover h1 {
+          font-size: clamp(24px, 7vw, 30px);
+        }
+
+        .book-page .page-number {
+          margin-bottom: 12px;
+        }
+
+        .book-controls {
+          gap: 8px;
+        }
+
+        .book-controls button {
+          padding: 11px 10px;
+          font-size: 14px;
+        }
+
+        .kalimba-wrap {
+          width: min(250px, 82vw);
+          margin-bottom: 16px;
+        }
+
+        .kalimba-tines {
+          gap: 2px;
+          max-width: 100%;
+        }
+
+        .kalimba-tines button {
+          width: clamp(10px, 3.5vw, 14px);
+        }
+
+        #bigHeart {
+          font-size: clamp(100px, 30vw, 140px);
+        }
+
+        #birthdayEnd.show:not(.cake-unlocked) {
+          width: 100% !important;
+          min-height: 0 !important;
+          max-width: 430px !important;
+          padding: 26px 18px 28px !important;
+          margin: 0 auto !important;
+        }
+
+        #birthdayEnd.cake-unlocked.show {
+          width: 100% !important;
+          padding: 14px 8px 22px !important;
+        }
+
+        #birthdayEnd.cake-unlocked .birthday-cake-wrap {
+          width: min(330px, 88vw) !important;
+          max-width: 100%;
+        }
+
+        .flame-instruction,
+        .blow-controls,
+        .candle-message {
+          max-width: 100%;
+          overflow-wrap: anywhere;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .card {
+          padding: 18px 13px;
+          border-radius: 20px;
+        }
+
+        .birthday-page {
+          padding: 24px 13px 20px;
+        }
+
+        .book-controls button {
+          flex-basis: 90px;
+          font-size: 13px;
+        }
+
+        .kalimba-wrap {
+          transform: scale(.92);
+          margin-bottom: 4px;
+        }
+      }
+
+      @media (max-height: 520px) and (orientation: landscape) {
+        body {
+          align-items: flex-start;
+        }
+
+        .card {
+          margin: 8px auto;
+        }
+      }
+
     </style>
   </body>
 </html>
