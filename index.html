@@ -2993,16 +2993,23 @@
               sum += v * v;
             }
             const rms = Math.sqrt(sum / samples.length);
-            if (rms > 0.1 && !blowCooldown) {
+            if (cakeIsLit && rms > 0.1 && !blowCooldown) {
               if (!blowStartedAt) blowStartedAt = performance.now();
               if (performance.now() - blowStartedAt > 110) {
-                blowOutCandle();
                 blowCooldown = true;
+                blowOutCandle();
+                // Keep listening between relights; the same microphone session
+                // will detect the next candle blow without requiring permission again.
+                setTimeout(() => {
+                  blowStartedAt = 0;
+                  blowCooldown = false;
+                }, 900);
               }
-            } else {
+            } else if (rms <= 0.1) {
               blowStartedAt = 0;
             }
-            if (!blowCooldown) micFrame = requestAnimationFrame(detect);
+            // Keep the analyser loop alive while the candle is out and after it is relit.
+            micFrame = requestAnimationFrame(detect);
           };
           detect();
         } catch (err) {
@@ -3026,17 +3033,17 @@
           "🌻 You made a wish! Enjoy your sunflower celebration! 💖";
         micStatus.textContent = "Wish made! Sunflowers incoming! 🌻";
         createCandleConfetti(260, true);
-        if (micFrame) cancelAnimationFrame(micFrame);
-        micFrame = null;
-        if (micStream) micStream.getTracks().forEach((track) => track.stop());
-        micStream = null;
-        if (micContext && micContext.state !== "closed") micContext.close();
-        micContext = null;
+        // Do not close the microphone after blowing out the candle. Keeping the
+        // analyser running allows the next spawned flame to be blown out too.
         blowStartedAt = 0;
-        blowCooldown = false;
-        if (enableMicBlow) {
+        if (enableMicBlow && micStream) {
+          enableMicBlow.disabled = true;
+          enableMicBlow.textContent = "🎤 Microphone enabled";
+          micStatus.textContent = "Microphone is still listening. Light the candle again and blow when ready! 🎤";
+        } else if (enableMicBlow) {
           enableMicBlow.disabled = false;
           enableMicBlow.textContent = "🎤 Enable microphone";
+          micStatus.textContent = "Enable the microphone again when you relight the candle.";
         }
         if (spawnFireAgain) spawnFireAgain.hidden = false;
       }
@@ -3046,7 +3053,7 @@
           if (!cakeRevealed || cakeIsLit || spawnFireAgain.hidden) return;
           spawnFireAgain.hidden = true;
           placeReadyFlame();
-          flameInstruction.textContent = "✨ Drag the new 🔥 onto the birthday candle to light it again! ✨";
+          flameInstruction.textContent = "✨ Drag the new 🔥 onto the birthday candle to light it again! Your microphone will keep listening, so you can blow it out again. ✨";
         });
       }
 
