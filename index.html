@@ -1873,6 +1873,9 @@
               >Allow microphone access, then blow toward your mic.</span
             >
           </div>
+          <button type="button" id="spawnFireAgain" class="spawn-fire-again" hidden>
+            🔥 Spawn fire again
+          </button>
 
           <h1>Happy Birthday! 🎉</h1>
 
@@ -2832,6 +2835,18 @@
       const blowControls = document.getElementById("blowControls");
       let cakeIsLit = false;
       let cakeRevealed = false;
+      const spawnFireAgain = document.getElementById("spawnFireAgain");
+
+      function placeReadyFlame() {
+        const margin = 55;
+        flameSource.style.display = "block";
+        flameSource.classList.add("ready");
+        flameHint.classList.remove("used");
+        flameSource.style.left =
+          margin + Math.random() * Math.max(20, window.innerWidth - margin * 2) + "px";
+        flameSource.style.top =
+          Math.max(80, window.innerHeight * (0.14 + Math.random() * 0.48)) + "px";
+      }
 
       function revealBirthdayCake() {
         if (cakeRevealed) return;
@@ -2839,15 +2854,7 @@
         document.getElementById("birthdayEnd").classList.add("cake-unlocked");
         cakeTarget.classList.add("revealed");
         flameInstruction.hidden = false;
-        flameSource.classList.add("ready");
-        const margin = 55;
-        flameSource.style.left =
-          margin +
-          Math.random() * Math.max(20, window.innerWidth - margin * 2) +
-          "px";
-        flameSource.style.top =
-          Math.max(80, window.innerHeight * (0.14 + Math.random() * 0.48)) +
-          "px";
+        placeReadyFlame();
         candleMessage.textContent = "";
         candleMessage.classList.remove("show");
         createCandleConfetti(70);
@@ -2856,8 +2863,14 @@
       function lightCakeCandle() {
         if (cakeIsLit) return;
         cakeIsLit = true;
+        document.body.classList.add("candle-atmosphere");
+        document.documentElement.classList.add("candle-atmosphere-active");
+        const cakeRect = cakeTarget.getBoundingClientRect();
+        document.body.style.setProperty("--cake-light-x", ((cakeRect.left + cakeRect.width / 2) / window.innerWidth * 100) + "%");
+        document.body.style.setProperty("--cake-light-y", ((cakeRect.top + cakeRect.height * .46) / window.innerHeight * 100) + "%");
         cakeFlame.classList.add("lit");
         cakeCandle.classList.add("lit");
+        if (spawnFireAgain) spawnFireAgain.hidden = true;
         candleMessage.textContent =
           "🎉 You lit the birthday candle! Make a wish and blow into the mic! 🌻";
         candleMessage.classList.add("show");
@@ -3002,6 +3015,8 @@
       function blowOutCandle() {
         if (!cakeIsLit) return;
         cakeIsLit = false;
+        document.body.classList.remove("candle-atmosphere");
+        document.documentElement.classList.remove("candle-atmosphere-active");
         cakeFlame.classList.remove("lit");
         cakeCandle.classList.remove("lit");
         candleMessage.textContent =
@@ -3012,8 +3027,27 @@
         micStatus.textContent = "Wish made! Sunflowers incoming! 🌻";
         createCandleConfetti(260, true);
         if (micFrame) cancelAnimationFrame(micFrame);
+        micFrame = null;
         if (micStream) micStream.getTracks().forEach((track) => track.stop());
+        micStream = null;
         if (micContext && micContext.state !== "closed") micContext.close();
+        micContext = null;
+        blowStartedAt = 0;
+        blowCooldown = false;
+        if (enableMicBlow) {
+          enableMicBlow.disabled = false;
+          enableMicBlow.textContent = "🎤 Enable microphone";
+        }
+        if (spawnFireAgain) spawnFireAgain.hidden = false;
+      }
+
+      if (spawnFireAgain) {
+        spawnFireAgain.addEventListener("click", function () {
+          if (!cakeRevealed || cakeIsLit || spawnFireAgain.hidden) return;
+          spawnFireAgain.hidden = true;
+          placeReadyFlame();
+          flameInstruction.textContent = "✨ Drag the new 🔥 onto the birthday candle to light it again! ✨";
+        });
       }
 
       if (enableMicBlow)
@@ -4162,6 +4196,90 @@
       .book-instruction {
         margin-left: auto;
         margin-right: auto;
+      }
+
+      /* Candlelit room: dark surroundings, with a realistic warm pool of light on the cake. */
+      .spawn-fire-again {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin: 12px auto 4px;
+        padding: 12px 20px;
+        border: 0;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #ffb347, #f07822);
+        color: #3d210d;
+        font-weight: 700;
+        font-size: 15px;
+        box-shadow: 0 5px 18px rgba(245, 139, 37, .28);
+        cursor: pointer;
+      }
+      .spawn-fire-again[hidden] { display: none !important; }
+      body.candle-atmosphere .card {
+        background: transparent !important;
+        box-shadow: none !important;
+      }
+      body.candle-atmosphere::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 19;
+        pointer-events: none;
+        background:
+          radial-gradient(ellipse 290px 245px at var(--cake-light-x, 50%) var(--cake-light-y, 51%),
+            rgba(255, 190, 91, .27) 0%, rgba(255, 156, 54, .17) 34%, rgba(25, 13, 7, .30) 66%, rgba(0, 0, 0, .88) 100%),
+          rgba(0, 0, 0, .77);
+        transition: opacity .45s ease;
+      }
+      body.candle-atmosphere #birthdayEnd.cake-unlocked.show {
+        position: relative !important;
+        z-index: 20 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+      }
+      body.candle-atmosphere #cakeTarget {
+        z-index: 21 !important;
+        isolation: isolate;
+        filter: drop-shadow(0 0 22px rgba(255, 174, 77, .42))
+                drop-shadow(0 0 52px rgba(255, 142, 48, .23));
+      }
+      body.candle-atmosphere #cakeTarget::before {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        left: 50%;
+        top: 43%;
+        width: 118%;
+        height: 105%;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        pointer-events: none;
+        background: radial-gradient(ellipse, rgba(255, 183, 91, .28) 0%, rgba(255, 158, 69, .17) 42%, rgba(255, 143, 48, .06) 68%, transparent 78%);
+        filter: blur(13px);
+      }
+      body.candle-atmosphere #cakeTarget .birthday-cake {
+        filter: brightness(1.22) sepia(.12) saturate(1.12);
+        text-shadow: 0 0 14px rgba(255, 189, 106, .30);
+      }
+      body.candle-atmosphere #cakeCandle {
+        filter: brightness(1.28) drop-shadow(0 0 9px rgba(255, 183, 82, .85));
+      }
+      body.candle-atmosphere #cakeFlame.lit {
+        filter: brightness(1.25) drop-shadow(0 0 7px #ffd27a) drop-shadow(0 0 19px rgba(255, 153, 43, .9));
+      }
+      body.candle-atmosphere #birthdayEnd .flame-instruction,
+      body.candle-atmosphere #birthdayEnd .candle-message,
+      body.candle-atmosphere #birthdayEnd .blow-controls,
+      body.candle-atmosphere #birthdayEnd #spawnFireAgain {
+        position: relative;
+        z-index: 903;
+      }
+      @media (max-width: 480px) {
+        body.candle-atmosphere::after {
+          background:
+            radial-gradient(ellipse 230px 205px at var(--cake-light-x, 50%) var(--cake-light-y, 51%), rgba(255, 190, 91, .30) 0%, rgba(255, 156, 54, .17) 38%, rgba(20, 10, 5, .35) 68%, rgba(0, 0, 0, .87) 100%),
+            rgba(0, 0, 0, .76);
+        }
       }
 </style>
   </body>
