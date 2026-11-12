@@ -1590,6 +1590,117 @@
           font-size: 40px !important;
         }
       }
+
+      /* One-time midnight birthday letter */
+      .letter-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 200000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 18px;
+        background: rgba(34, 24, 18, 0.58);
+        backdrop-filter: blur(7px);
+        -webkit-backdrop-filter: blur(7px);
+      }
+      .letter-overlay.open {
+        display: flex;
+        animation: letterBackdrop 0.45s ease both;
+      }
+      .birthday-letter {
+        position: relative;
+        width: min(100%, 540px);
+        max-height: min(82dvh, 760px);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        padding: 42px clamp(22px, 6vw, 46px) 34px;
+        border: 1px solid rgba(255, 224, 164, 0.9);
+        border-radius: 18px 18px 24px 24px;
+        color: #59402e;
+        text-align: left;
+        background:
+          radial-gradient(circle at 12% 8%, rgba(255,255,255,.9), transparent 28%),
+          linear-gradient(145deg, #fffdf4, #fff0cf);
+        box-shadow: 0 28px 90px rgba(20, 10, 5, .38), inset 0 0 0 5px rgba(211, 151, 75, .12);
+        transform-origin: center;
+      }
+      .letter-overlay.open .birthday-letter {
+        animation: letterPop 0.75s cubic-bezier(.16,1.35,.3,1) both;
+      }
+      .letter-close {
+        position: sticky;
+        float: right;
+        top: 0;
+        z-index: 2;
+        width: 38px;
+        height: 38px;
+        margin: -23px -25px 4px 12px;
+        padding: 0;
+        border-radius: 50%;
+        background: #f3d9b4;
+        color: #75421f;
+        font-size: 24px;
+        line-height: 1;
+        box-shadow: 0 3px 12px rgba(80, 45, 15, .15);
+      }
+      .letter-sparkle {
+        text-align: center;
+        font-size: 29px;
+        margin: 4px 0 12px;
+        animation: letterSparkle 1.8s ease-in-out infinite alternate;
+      }
+      .birthday-letter h2 {
+        clear: both;
+        color: #bd6a28;
+        text-align: center;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(25px, 6vw, 34px);
+        margin: 0 0 22px;
+      }
+      .birthday-letter p {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(15px, 3.8vw, 17px);
+        line-height: 1.8;
+        margin: 0 0 17px;
+        overflow-wrap: anywhere;
+      }
+      .letter-signoff {
+        color: #b85b46;
+        font-weight: bold;
+        text-align: right;
+        margin-top: 22px !important;
+      }
+      .letter-reopen {
+        display: none;
+        margin: 8px auto 12px;
+        padding: 11px 18px;
+        background: linear-gradient(135deg, #ffe3a1, #ffc96e);
+        color: #70451e;
+        box-shadow: 0 5px 16px rgba(160, 100, 25, .2);
+      }
+      .letter-reopen.available { display: inline-block; }
+      @keyframes letterBackdrop {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      @keyframes letterPop {
+        0% { opacity: 0; transform: translateY(65px) scale(.72) rotate(-5deg); filter: blur(8px); }
+        70% { opacity: 1; transform: translateY(-8px) scale(1.025) rotate(1deg); filter: blur(0); }
+        100% { opacity: 1; transform: translateY(0) scale(1) rotate(0); }
+      }
+      @keyframes letterSparkle {
+        from { transform: scale(.92) rotate(-5deg); filter: drop-shadow(0 0 2px #ffc45c); }
+        to { transform: scale(1.12) rotate(5deg); filter: drop-shadow(0 0 12px #ffc45c); }
+      }
+      @media (max-width: 480px) {
+        .letter-overlay { padding: 12px; }
+        .birthday-letter { max-height: 86dvh; padding: 34px 22px 25px; }
+        .letter-close { margin: -18px -12px 4px 8px; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .letter-overlay.open, .letter-overlay.open .birthday-letter, .letter-sparkle { animation-duration: .01ms; }
+      }
     </style>
   </head>
 
@@ -1861,6 +1972,7 @@
             >
           </div>
           <div class="candle-message" id="candleMessage"></div>
+          <button type="button" class="letter-reopen" id="reopenBirthdayLetter">💌 Open your birthday letter</button>
           <div class="blow-controls" id="blowControls" hidden>
             <p>
               🎤 Make a wish, then blow into the microphone to put out the
@@ -1887,6 +1999,18 @@
       </div>
     </div>
 
+
+    <div class="letter-overlay" id="birthdayLetterOverlay" aria-hidden="true">
+      <article class="birthday-letter" role="dialog" aria-modal="true" aria-labelledby="letterTitle">
+        <button type="button" class="letter-close" id="closeBirthdayLetter" aria-label="Close letter">×</button>
+        <div class="letter-sparkle">✨ 💌 ✨</div>
+        <h2 id="letterTitle">A Little Letter For You ♥️</h2>
+        <p>The clock just hit 12:00 AM, which means it’s officially your day! Happy birthday, my Baby ♥️</p>
+        <p>I was just thinking about all the memories we’ve made together, and it hit me all over again how lucky I am to have you in my life. You bring so much warmth, kindness, and happiness into my days just by being yourself. Thank you for always supporting me, making me laugh, and being my safe place.</p>
+        <p>I hope this new year brings you everything you’ve been wishing for, because you truly deserve the world. I’m so glad I get to be the first to wish you this right at midnight. I love you so much, and I can’t wait to celebrate you today and always.</p>
+        <p class="letter-signoff">Forever yours, ♥️<br>Lyan Your Boyfriend ♥️</p>
+      </article>
+    </div>
     <script>
       const birthdayMusic1 = document.getElementById("birthdayMusic1");
 
@@ -2837,6 +2961,35 @@
       let cakeRevealed = false;
       const spawnFireAgain = document.getElementById("spawnFireAgain");
 
+      const birthdayLetterOverlay = document.getElementById("birthdayLetterOverlay");
+      const closeBirthdayLetter = document.getElementById("closeBirthdayLetter");
+      const reopenBirthdayLetter = document.getElementById("reopenBirthdayLetter");
+      let birthdayLetterShown = false;
+
+      function openBirthdayLetter() {
+        birthdayLetterOverlay.classList.add("open");
+        birthdayLetterOverlay.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        closeBirthdayLetter.focus();
+      }
+      function closeBirthdayLetterModal() {
+        birthdayLetterOverlay.classList.remove("open");
+        birthdayLetterOverlay.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        reopenBirthdayLetter.focus();
+      }
+      closeBirthdayLetter.addEventListener("click", closeBirthdayLetterModal);
+      reopenBirthdayLetter.addEventListener("click", openBirthdayLetter);
+      birthdayLetterOverlay.addEventListener("click", function(event) {
+        if (event.target === birthdayLetterOverlay) closeBirthdayLetterModal();
+      });
+      document.addEventListener("keydown", function(event) {
+        if (event.key === "Escape" && birthdayLetterOverlay.classList.contains("open")) {
+          closeBirthdayLetterModal();
+        }
+      });
+
+
       function placeReadyFlame() {
         const margin = 55;
         flameSource.style.display = "block";
@@ -3033,6 +3186,13 @@
           "🌻 You made a wish! Enjoy your sunflower celebration! 💖";
         micStatus.textContent = "Wish made! Sunflowers incoming! 🌻";
         createCandleConfetti(260, true);
+        // Show the letter only after the very first successful candle blow.
+        // Later relights and blows will never auto-open it again.
+        if (!birthdayLetterShown) {
+          birthdayLetterShown = true;
+          reopenBirthdayLetter.classList.add("available");
+          setTimeout(openBirthdayLetter, 1100);
+        }
         // Do not close the microphone after blowing out the candle. Keeping the
         // analyser running allows the next spawned flame to be blown out too.
         blowStartedAt = 0;
