@@ -3103,18 +3103,22 @@
       let micStream = null;
       let micContext = null;
       let micFrame = null;
+      let micIsStarting = false;
+      let micIsListening = false;
       let blowStartedAt = 0;
       let blowCooldown = false;
 
       async function startMicBlowDetection() {
+        if (micIsStarting || micIsListening) return;
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
           micStatus.textContent =
-            "Microphone access isn't available here. Open this page in a supported browser over HTTPS or localhost.";
+            "Microphone needs a secure page. Open this page on HTTPS (or localhost) and allow microphone access.";
           return;
         }
+        micIsStarting = true;
+        enableMicBlow.disabled = true;
+        micStatus.textContent = "Requesting microphone permission…";
         try {
-          enableMicBlow.disabled = true;
-          micStatus.textContent = "Requesting microphone permission…";
           micStream = await navigator.mediaDevices.getUserMedia({
             audio: {
               echoCancellation: false,
@@ -3123,52 +3127,57 @@
             },
           });
           const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (!AudioCtx) throw new Error("Web Audio is not supported in this browser.");
           micContext = new AudioCtx();
-          await micContext.resume();
+          if (micContext.state === "suspended") await micContext.resume();
           const source = micContext.createMediaStreamSource(micStream);
           const analyser = micContext.createAnalyser();
-          analyser.fftSize = 1024;
-          analyser.smoothingTimeConstant = 0.15;
+          analyser.fftSize = 2048;
+          analyser.smoothingTimeConstant = 0.08;
           source.connect(analyser);
           const samples = new Uint8Array(analyser.fftSize);
-          micStatus.textContent =
-            "Microphone ready! Blow toward your mic when you're ready. 🎤";
+          micIsListening = true;
+          micStatus.textContent = "Microphone ready! Blow steadily toward your mic to put out the candle. 🎤";
           enableMicBlow.textContent = "🎤 Microphone enabled";
+          enableMicBlow.disabled = true;
+
           const detect = () => {
-            if (!cakeIsLit) {
-              micFrame = requestAnimationFrame(detect);
-              return;
-            }
+            if (!micIsListening) return;
             analyser.getByteTimeDomainData(samples);
             let sum = 0;
             for (let i = 0; i < samples.length; i++) {
-              const v = (samples[i] - 128) / 128;
-              sum += v * v;
+              const value = (samples[i] - 128) / 128;
+              sum += value * value;
             }
             const rms = Math.sqrt(sum / samples.length);
-            if (cakeIsLit && rms > 0.1 && !blowCooldown) {
+            // A lower threshold makes blowing work with quieter laptop and phone microphones.
+            if (cakeIsLit && rms > 0.035 && !blowCooldown) {
               if (!blowStartedAt) blowStartedAt = performance.now();
-              if (performance.now() - blowStartedAt > 110) {
+              if (performance.now() - blowStartedAt >= 220) {
                 blowCooldown = true;
                 blowOutCandle();
-                // Keep listening between relights; the same microphone session
-                // will detect the next candle blow without requiring permission again.
                 setTimeout(() => {
                   blowStartedAt = 0;
                   blowCooldown = false;
-                }, 900);
+                }, 1100);
               }
-            } else if (rms <= 0.1) {
+            } else if (rms <= 0.035 || !cakeIsLit) {
               blowStartedAt = 0;
             }
-            // Keep the analyser loop alive while the candle is out and after it is relit.
             micFrame = requestAnimationFrame(detect);
           };
           detect();
         } catch (err) {
+          micIsListening = false;
+          if (micStream) micStream.getTracks().forEach(track => track.stop());
+          micStream = null;
           enableMicBlow.disabled = false;
-          micStatus.textContent =
-            "Couldn't access the microphone. Please allow mic permission in your browser and try again.";
+          enableMicBlow.textContent = "🎤 Enable microphone";
+          micStatus.textContent = err && err.name === "NotAllowedError"
+            ? "Microphone permission was blocked. Allow it in your browser's site settings, then tap Enable microphone again."
+            : "Couldn't start the microphone. Check your browser permission and try again.";
+        } finally {
+          micIsStarting = false;
         }
       }
 
@@ -3196,7 +3205,7 @@
         // Do not close the microphone after blowing out the candle. Keeping the
         // analyser running allows the next spawned flame to be blown out too.
         blowStartedAt = 0;
-        if (enableMicBlow && micStream) {
+        if (enableMicBlow && micIsListening) {
           enableMicBlow.disabled = true;
           enableMicBlow.textContent = "🎤 Microphone enabled";
           micStatus.textContent = "Microphone is still listening. Light the candle again and blow when ready! 🎤";
